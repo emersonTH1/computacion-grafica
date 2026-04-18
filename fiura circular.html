@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>ACTIVIDAD EN CLASE 1</title>
+</head>
+<body>
+
+<h2>ACTIVIDAD EN CLASE 1</h2>
+<h3>CREAR UN CUADRADO Y UN TRIÁNGULO</h3>
+
+<canvas id="myCanvas" width="900" height="500" style="border:4px solid black;"></canvas>
+
+<script>
+    var canvas = document.getElementById("myCanvas");
+    var ctx = canvas.getContext("2d");
+
+    // 🔲 CUADRO IZQUIERDO
+    ctx.strokeRect(20, 50, 350, 350);
+
+    // 🔴 RECTÁNGULO IZQUIERDO (más pequeño)
+    ctx.beginPath();
+    ctx.rect(60, 100, 80, 120);
+    ctx.fillStyle = "red";
+    ctx.fill();
+    ctx.stroke();
+
+    // 🔺 TRIÁNGULO IZQUIERDO
+    ctx.beginPath();
+    ctx.moveTo(250, 100);
+    ctx.lineTo(280, 180);
+    ctx.lineTo(220, 180);
+    ctx.closePath();
+    ctx.fillStyle = "lightcoral";
+    ctx.fill();
+    ctx.stroke();
+
+
+    // 🔲 CUADRO DERECHO
+    ctx.strokeRect(450, 50, 350, 350);
+
+    // 🔸 LÍNEA DIVISORIA
+    ctx.beginPath();
+    ctx.moveTo(450, 225);
+    ctx.lineTo(800, 225);
+    ctx.stroke();
+
+    // 🔴 CUADRADO ARRIBA 
+    ctx.beginPath();
+    ctx.rect(600, 100, 80, 80);
+    ctx.fillStyle = "red";
+    ctx.fill();
+    ctx.stroke();
+
+    // 🔺 TRIÁNGULO ABAJO
+    ctx.beginPath();
+    ctx.moveTo(640, 260);
+    ctx.lineTo(670, 330);
+    ctx.lineTo(610, 330);
+    ctx.closePath();
+    ctx.fillStyle = "lightcoral";
+    ctx.fill();
+    ctx.stroke();
+
+</script>
+
+</body>
+</html>
