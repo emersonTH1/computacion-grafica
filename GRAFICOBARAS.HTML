@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gráfico de Barras</title>
+</head>
+
+<body>
+<h2>Gráfico de Barras</h2>
+
+<canvas id="myCanvas" width="500" height="500" style="border:2px solid black;"></canvas>
+
+<script>
+var canvas = document.getElementById("myCanvas");
+var ctx = canvas.getContext("2d");
+
+// 📊 DATOS
+var datos = [50, 60, 70, 90, 80];
+var colores = ["red", "blue", "green", "orange", "purple"];
+
+var x = 60; 
+var width = 40;
+
+// 📊 DIBUJAR BARRAS
+for (var i = 0; i < datos.length; i++) {
+
+    ctx.fillStyle = colores[i];
+    ctx.fillRect(x, 440 - datos[i]*3, width, datos[i]*3);
+
+    // SOLO NÚMERO (sin %)
+    ctx.fillStyle = "black";
+    ctx.fillText(datos[i], x + 10, 430 - datos[i]*3);
+
+    x += 70;
+}
+
+// 📏 LÍNEA BASE
+ctx.beginPath();
+ctx.moveTo(40, 440);
+ctx.lineTo(480, 440);
+ctx.stroke();
+
+</script>
+
+</body>
+</html>

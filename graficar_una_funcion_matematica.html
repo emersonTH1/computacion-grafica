@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gráfico de Líneas Dinámico</title>
+</head>
+
+<body>
+<h2>Gráfico de Líneas Dinámico  desarrollado por emerson tomaylla</h2>
+<h2> desarrollado por emerson tomaylla</h2>
+
+<canvas id="canvas" width="600" height="400" style="border:2px solid black;"></canvas>
+
+<script>
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+
+var t = 0; // tiempo (para animación)
+
+// 🔁 función que dibuja el gráfico
+function dibujar() {
+
+    // limpiar canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // 📏 dibujar ejes
+    ctx.beginPath();
+    ctx.moveTo(0, 200); // eje X
+    ctx.lineTo(600, 200);
+
+    ctx.moveTo(300, 0); // eje Y
+    ctx.lineTo(300, 400);
+    ctx.stroke();
+
+    // 📈 dibujar función
+    ctx.beginPath();
+
+    for (var x = 0; x < 600; x++) {
+
+        var y = 100 * Math.sin((x * 0.02) + t); // función
+
+        if (x === 0) {
+            ctx.moveTo(x, 200 - y);
+        } else {
+            ctx.lineTo(x, 200 - y);
+        }
+    }
+
+    ctx.strokeStyle = "blue";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // aumentar tiempo → anima la gráfica
+    t += 0.05;
+}
+
+// 🔁 actualizar cada 50 ms
+setInterval(dibujar, 50);
+
+</script>
+
+</body>
+</html>

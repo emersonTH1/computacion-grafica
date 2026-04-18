@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gráfico de Parábola Horizontal</title>
+</head>
+<body>
+
+<h2>Grafico de una función</h2>
+
+<canvas id="myCanvas" width="500" height="500" 
+style="border:4px solid black; background-color:white;"></canvas>
+
+<script>
+const canvas = document.getElementById('myCanvas');
+const ctx = canvas.getContext('2d');
+
+// 🔲 DIBUJAR EJES (Líneas más delgadas para que se parezcan a la imagen)
+ctx.beginPath();
+// Eje X
+ctx.moveTo(0, 250);
+ctx.lineTo(500, 250);
+// Eje Y
+ctx.moveTo(250, 0);
+ctx.lineTo(250, 500);
+
+ctx.strokeStyle = '#555'; // Color gris oscuro para los ejes
+ctx.lineWidth = 1;
+ctx.stroke();
+
+// 🟢 PARÁBOLA QUE ABRE A LA IZQUIERDA
+ctx.beginPath();
+
+// Recorremos el eje Y de arriba hacia abajo
+for (var y = -250; y <= 250; y++) {
+    
+    // Función: x = -(y^2) / constante
+    // El divisor (100) controla qué tan "abierta" es la curva
+    var x = -Math.pow(y, 2) / 100; 
+
+    // Dibujamos: 250+x (se mueve a la izquierda) y 250-y (centrado en vertical)
+    ctx.lineTo(250 + x, 250 - y);
+}
+
+ctx.strokeStyle = 'green'; // Color verde como el de tu imagen
+ctx.lineWidth = 2;
+ctx.stroke();
+
+</script>
+
+</body>
+</html>
