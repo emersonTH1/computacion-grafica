@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Puntos en Movimiento</title>
+</head>
+
+<body>
+
+<h2>Puntos en Movimiento</h2>
+<h1>desarollado por emerson tomaylla hancco </h1>
+
+<canvas id="canvas" width="500" height="400" style="border:2px solid black;"></canvas>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+// crear 5 puntos
+let puntos = [];
+
+for (let i = 0; i < 5; i++) {
+    puntos.push({
+        x: Math.random() * 500,
+        y: Math.random() * 400
+    });
+}
+
+function dibujar() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    puntos.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+        ctx.fillStyle = "red";
+        ctx.fill();
+    });
+}
+
+function mover() {
+    puntos.forEach(p => {
+        p.x = Math.random() * 500;
+        p.y = Math.random() * 400;
+    });
+
+    dibujar();
+}
+
+setInterval(mover, 1000);
+</script>
+
+</body>
+</html>

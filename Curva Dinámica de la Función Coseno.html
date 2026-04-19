@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Función Coseno</title>
+</head>
+
+<body>
+
+<h2>Curva Dinámica y = cos(x)</h2>
+<h1>desarollado por emerson tomaylla hancco </h1>
+
+<canvas id="canvas" width="600" height="400" style="border:2px solid black;"></canvas>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+let t = 0;
+
+function dibujar() {
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // ejes
+    ctx.beginPath();
+    ctx.moveTo(0, 200);
+    ctx.lineTo(600, 200);
+    ctx.moveTo(300, 0);
+    ctx.lineTo(300, 400);
+    ctx.stroke();
+
+    // curva coseno
+    ctx.beginPath();
+
+    for (let x = 0; x < 600; x++) {
+        let y = 100 * Math.cos((x * 0.02) + t);
+
+        if (x === 0) {
+            ctx.moveTo(x, 200 - y);
+        } else {
+            ctx.lineTo(x, 200 - y);
+        }
+    }
+
+    ctx.strokeStyle = "blue";
+    ctx.stroke();
+
+    t += 0.1;
+}
+
+setInterval(dibujar, 50);
+</script>
+
+</body>
+</html>
