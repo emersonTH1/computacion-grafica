@@ -3,9 +3,75 @@
 <head>
 <meta charset="UTF-8">
 <title>Transformaciones 3D</title>
-<style>body{margin:0;overflow:hidden;}</style>
+
+<style>
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: Arial;
+}
+
+/* 📌 PANEL DE CONTROLES */
+.panel {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* 🔥 FLECHAS VISUALES */
+.flechas {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    display: grid;
+    grid-template-columns: 50px 50px 50px;
+    gap: 5px;
+}
+
+.boton {
+    width: 50px;
+    height: 50px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 20px;
+}
+</style>
+
 </head>
 <body>
+
+<!-- 📌 INSTRUCCIONES -->
+<div class="panel">
+<b>CONTROLES:</b><br>
+⬆️⬇️⬅️➡️ → Mover<br>
+Q / E → Rotar<br>
+W / S → Escalar
+</div>
+
+<!-- 🔥 FLECHAS VISUALES -->
+<div class="flechas">
+    <div></div>
+    <div class="boton">↑</div>
+    <div></div>
+
+    <div class="boton">←</div>
+    <div></div>
+    <div class="boton">→</div>
+
+    <div></div>
+    <div class="boton">↓</div>
+    <div></div>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
@@ -45,8 +111,16 @@ function animate(){
     if(keys["e"]) cube.rotation.y += 0.05;
 
     // 🔹 ESCALA
-    if(keys["w"]) cube.scale.x += 0.01, cube.scale.y += 0.01, cube.scale.z += 0.01;
-    if(keys["s"]) cube.scale.x -= 0.01, cube.scale.y -= 0.01, cube.scale.z -= 0.01;
+    if(keys["w"]) {
+        cube.scale.x += 0.01;
+        cube.scale.y += 0.01;
+        cube.scale.z += 0.01;
+    }
+    if(keys["s"]) {
+        cube.scale.x -= 0.01;
+        cube.scale.y -= 0.01;
+        cube.scale.z -= 0.01;
+    }
 
     renderer.render(scene,camera);
 }
