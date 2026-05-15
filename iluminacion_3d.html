@@ -23,17 +23,31 @@
         border-radius: 10px;
         line-height: 1.6;
     }
+
+    #coords {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        background: rgba(0,0,0,0.5);
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 13px;
+        color: #ffff99;
+        font-family: monospace;
+    }
 </style>
 </head>
 <body>
 
 <div id="info">
-    <h3>Iluminación 3D</h3>
-    <p>[1] Modelo Phong</p>
-    <p>[2] Modelo Blinn-Phong</p>
-    <p>[W/S] Luz arriba/abajo</p>
-    <p>[A/D] Luz izquierda/derecha</p>
+    <h3 style="margin:0 0 8px">Iluminación 3D</h3>
+    <p style="margin:2px 0">[1] Modelo Phong</p>
+    <p style="margin:2px 0">[2] Modelo Blinn-Phong</p>
+    <p style="margin:2px 0">[W/S] Orbitar luz arriba/abajo</p>
+    <p style="margin:2px 0">[A/D] Orbitar luz izquierda/derecha</p>
 </div>
+
+<div id="coords">luz: calculando...</div>
 
 <script type="module">
 
@@ -64,7 +78,6 @@ camera.position.z = 4;
 // ======================================================
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
-
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
@@ -74,7 +87,6 @@ document.body.appendChild(renderer.domElement);
 
 const geometry = new THREE.SphereGeometry(1, 64, 64);
 
-// ----- Material Blinn-Phong -----
 let material = new THREE.MeshPhongMaterial({
     color: 0x3388ff,
     shininess: 64,
@@ -85,88 +97,128 @@ const sphere = new THREE.Mesh(geometry, material);
 scene.add(sphere);
 
 // ======================================================
+// COORDENADAS ESFERICAS DE LA LUZ
+// ======================================================
+// En vez de mover X/Y directamente, guardamos dos ángulos
+// y calculamos la posición 3D a partir de ellos.
+//
+//   theta = ángulo horizontal (izquierda/derecha)
+//   phi   = ángulo vertical   (arriba/abajo)
+//   radio = distancia fija al centro
+//
+// Conversión a XYZ:
+//   x = radio * sin(phi) * sin(theta)
+//   y = radio * cos(phi)
+//   z = radio * sin(phi) * cos(theta)
+
+let theta = Math.PI / 4;   // 45° horizontal
+let phi   = Math.PI / 4;   // 45° vertical
+const radioLuz = 3.0;       // distancia fija — la luz NUNCA se aleja
+
+function actualizarPosicionLuz() {
+    // Convertir esféricas → cartesianas
+    light.position.set(
+        radioLuz * Math.sin(phi) * Math.sin(theta),
+        radioLuz * Math.cos(phi),
+        radioLuz * Math.sin(phi) * Math.cos(theta)
+    );
+
+    // Mostrar coordenadas en pantalla
+    const x = light.position.x.toFixed(2);
+    const y = light.position.y.toFixed(2);
+    const z = light.position.z.toFixed(2);
+    document.getElementById('coords').textContent =
+        `luz  x:${x}  y:${y}  z:${z}  |  θ:${(theta * 180/Math.PI).toFixed(0)}°  φ:${(phi * 180/Math.PI).toFixed(0)}°`;
+}
+
+// ======================================================
 // LUZ
 // ======================================================
 
 const light = new THREE.PointLight(0xffffff, 1.5);
-light.position.set(2, 2, 2);
 scene.add(light);
 
-// Luz ambiental
 const ambient = new THREE.AmbientLight(0xffffff, 0.15);
 scene.add(ambient);
+
+actualizarPosicionLuz(); // posición inicial
 
 // ======================================================
 // CUBO REPRESENTANDO LA LUZ
 // ======================================================
 
 const lightCubeGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
-
-const lightCubeMaterial = new THREE.MeshBasicMaterial({
-    color: 0xffff99
-});
-
-const lightCube = new THREE.Mesh(
-    lightCubeGeometry,
-    lightCubeMaterial
-);
-
+const lightCubeMaterial = new THREE.MeshBasicMaterial({ color: 0xffff99 });
+const lightCube = new THREE.Mesh(lightCubeGeometry, lightCubeMaterial);
 scene.add(lightCube);
 
 // ======================================================
-// CONTROLES
+// ORBITA DE REFERENCIA (circulo punteado)
 // ======================================================
 
-let useBlinnPhong = true;
+const orbitPoints = [];
+for (let i = 0; i <= 64; i++) {
+    const a = (i / 64) * Math.PI * 2;
+    orbitPoints.push(new THREE.Vector3(
+        radioLuz * Math.sin(a),
+        0,
+        radioLuz * Math.cos(a)
+    ));
+}
+const orbitGeo = new THREE.BufferGeometry().setFromPoints(orbitPoints);
+const orbitMat = new THREE.LineBasicMaterial({ color: 0x334455, transparent: true, opacity: 0.4 });
+const orbitLine = new THREE.Line(orbitGeo, orbitMat);
+scene.add(orbitLine);
+
+// ======================================================
+// CONTROLES DE TECLADO
+// ======================================================
+
+const paso = 0.06; // radianes por tecla
 
 window.addEventListener('keydown', (event) => {
-
     switch(event.key.toLowerCase()) {
 
         case '1':
-            useBlinnPhong = false;
-
-            // Material Phong clásico
             material = new THREE.MeshPhongMaterial({
                 color: 0x3388ff,
                 shininess: 16,
                 specular: 0xffffff
             });
-
             sphere.material = material;
-
-            console.log("Modo Phong clásico");
+            console.log("Modo Phong clásico  (shininess 16)");
             break;
 
         case '2':
-            useBlinnPhong = true;
-
-            // Blinn-Phong (más brillante)
             material = new THREE.MeshPhongMaterial({
                 color: 0x3388ff,
                 shininess: 64,
                 specular: 0xffffff
             });
-
             sphere.material = material;
-
-            console.log("Modo Blinn-Phong");
+            console.log("Modo Blinn-Phong  (shininess 64)");
             break;
 
+        // IZQUIERDA / DERECHA  →  cambia theta (ángulo horizontal)
         case 'a':
-            light.position.x -= 0.1;
+            theta -= paso;
+            actualizarPosicionLuz();
             break;
 
         case 'd':
-            light.position.x += 0.1;
+            theta += paso;
+            actualizarPosicionLuz();
             break;
 
+        // ARRIBA / ABAJO  →  cambia phi, gira libre sin límites
         case 'w':
-            light.position.y += 0.1;
+            phi -= paso;
+            actualizarPosicionLuz();
             break;
 
         case 's':
-            light.position.y -= 0.1;
+            phi += paso;
+            actualizarPosicionLuz();
             break;
     }
 });
@@ -176,10 +228,8 @@ window.addEventListener('keydown', (event) => {
 // ======================================================
 
 window.addEventListener('resize', () => {
-
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
@@ -188,13 +238,11 @@ window.addEventListener('resize', () => {
 // ======================================================
 
 function animate() {
-
     requestAnimationFrame(animate);
 
-    // Rotación suave
     sphere.rotation.y += 0.003;
 
-    // Actualizar cubo de luz
+    // El cubo sigue exactamente a la luz
     lightCube.position.copy(light.position);
 
     renderer.render(scene, camera);
