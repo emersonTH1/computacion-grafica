@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iluminación 3D - Phong / Blinn-Phong</title>
+
+<style>
+    body {
+        margin: 0;
+        overflow: hidden;
+        background: #111;
+        font-family: Arial, sans-serif;
+        color: white;
+    }
+
+    #info {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: rgba(0,0,0,0.6);
+        padding: 12px;
+        border-radius: 10px;
+        line-height: 1.6;
+    }
+</style>
+</head>
+<body>
+
+<div id="info">
+    <h3>Iluminación 3D</h3>
+    <p>[1] Modelo Phong</p>
+    <p>[2] Modelo Blinn-Phong</p>
+    <p>[W/S] Luz arriba/abajo</p>
+    <p>[A/D] Luz izquierda/derecha</p>
+</div>
+
+<script type="module">
+
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160/build/three.module.js';
+
+// ======================================================
+// ESCENA
+// ======================================================
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x050510);
+
+// ======================================================
+// CAMARA
+// ======================================================
+
+const camera = new THREE.PerspectiveCamera(
+    45,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    100
+);
+
+camera.position.z = 4;
+
+// ======================================================
+// RENDERER
+// ======================================================
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// ======================================================
+// ESFERA
+// ======================================================
+
+const geometry = new THREE.SphereGeometry(1, 64, 64);
+
+// ----- Material Blinn-Phong -----
+let material = new THREE.MeshPhongMaterial({
+    color: 0x3388ff,
+    shininess: 64,
+    specular: 0xffffff
+});
+
+const sphere = new THREE.Mesh(geometry, material);
+scene.add(sphere);
+
+// ======================================================
+// LUZ
+// ======================================================
+
+const light = new THREE.PointLight(0xffffff, 1.5);
+light.position.set(2, 2, 2);
+scene.add(light);
+
+// Luz ambiental
+const ambient = new THREE.AmbientLight(0xffffff, 0.15);
+scene.add(ambient);
+
+// ======================================================
+// CUBO REPRESENTANDO LA LUZ
+// ======================================================
+
+const lightCubeGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+
+const lightCubeMaterial = new THREE.MeshBasicMaterial({
+    color: 0xffff99
+});
+
+const lightCube = new THREE.Mesh(
+    lightCubeGeometry,
+    lightCubeMaterial
+);
+
+scene.add(lightCube);
+
+// ======================================================
+// CONTROLES
+// ======================================================
+
+let useBlinnPhong = true;
+
+window.addEventListener('keydown', (event) => {
+
+    switch(event.key.toLowerCase()) {
+
+        case '1':
+            useBlinnPhong = false;
+
+            // Material Phong clásico
+            material = new THREE.MeshPhongMaterial({
+                color: 0x3388ff,
+                shininess: 16,
+                specular: 0xffffff
+            });
+
+            sphere.material = material;
+
+            console.log("Modo Phong clásico");
+            break;
+
+        case '2':
+            useBlinnPhong = true;
+
+            // Blinn-Phong (más brillante)
+            material = new THREE.MeshPhongMaterial({
+                color: 0x3388ff,
+                shininess: 64,
+                specular: 0xffffff
+            });
+
+            sphere.material = material;
+
+            console.log("Modo Blinn-Phong");
+            break;
+
+        case 'a':
+            light.position.x -= 0.1;
+            break;
+
+        case 'd':
+            light.position.x += 0.1;
+            break;
+
+        case 'w':
+            light.position.y += 0.1;
+            break;
+
+        case 's':
+            light.position.y -= 0.1;
+            break;
+    }
+});
+
+// ======================================================
+// REDIMENSIONAR VENTANA
+// ======================================================
+
+window.addEventListener('resize', () => {
+
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// ======================================================
+// ANIMACION
+// ======================================================
+
+function animate() {
+
+    requestAnimationFrame(animate);
+
+    // Rotación suave
+    sphere.rotation.y += 0.003;
+
+    // Actualizar cubo de luz
+    lightCube.position.copy(light.position);
+
+    renderer.render(scene, camera);
+}
+
+animate();
+
+</script>
+
+</body>
+</html>
